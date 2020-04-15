@@ -1,7 +1,0 @@
-dateTimeï¼š2020-04-15 10:24:30methodï¼šGETurlï¼šbodyï¼štypeï¼š1messageï¼šUncaught Error: Wrong parameters for Exception([string $message [, long $code [, Throwable $previous = NULL]]]) in D:\ËùÓĞ¿ª·¢ÏîÄ¿\¿ò¼Ü\tinyFrame\frame\src\error\Error.php:188
-Stack trace:
-#0 D:\ËùÓĞ¿ª·¢ÏîÄ¿\¿ò¼Ü\tinyFrame\frame\src\error\Error.php(188): Exception->__construct('Call to undefin...', 'Exception\xEF\xBC\x880\xEF\xBC...')
-#1 D:\ËùÓĞ¿ª·¢ÏîÄ¿\¿ò¼Ü\tinyFrame\frame\src\error\Error.php(95): og\error\Error->showError(Array)
-#2 [internal function]: og\error\Error->appException(Object(Error))
-#3 {main}
-  thrownfileï¼šD:\ËùÓĞ¿ª·¢ÏîÄ¿\¿ò¼Ü\tinyFrame\frame\src\error\Error.phplineï¼š188
