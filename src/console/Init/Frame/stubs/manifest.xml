@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://www.we7.cc" versionCode="1.0.1">
+	<application setting="false">
+		<name><![CDATA[{%addon_name%}]]></name>
+		<identifie><![CDATA[{%module_name%}]]></identifie>
+		<version><![CDATA[{%version%}]]></version>
+		<type><![CDATA[{%type%}]]></type>
+		<ability><![CDATA[{%ability%}]]></ability>
+		<description><![CDATA[{%description%}]]></description>
+		<author><![CDATA[{%author%}]]></author>
+		<url><![CDATA[{%url%}]]></url>
+	</application>
+	<platform>
+		<subscribes>
+		</subscribes>
+		<handles>
+		</handles>
+		<rule embed="false" />
+		<card embed="false" />
+	
+	</platform>
+	<bindings>
+		<cover>
+			<entry title="主页入口" do="#" state="" direct="false" />
+		</cover>
+		<menu>
+		</menu>
+	</bindings>
+	<permissions>
+	</permissions>
+	<install><![CDATA[]]></install>
+	<uninstall><![CDATA[]]></uninstall>
+	<upgrade><![CDATA[]]></upgrade>
+</manifest>

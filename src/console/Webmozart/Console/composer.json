@@ -1,0 +1,38 @@
+{
+    "name": "webmozart/console",
+    "description": "A usable, beautiful and easily testable console toolkit written in PHP.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Bernhard Schussek",
+            "email": "55585190@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.9",
+        "webmozart/assert": "^1.0",
+        "symfony/console": "^2.7|^3.0",
+        "symfony/process": "^2.5|^3.0",
+        "symfony/event-dispatcher": "^2.5|^3.0"
+    },
+    "require-dev": {
+        "symfony/filesystem": "^2.3|^3.0",
+        "phpunit/phpunit": "^4.6",
+        "sebastian/version": "^1.0.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Webmozart\\Console\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Webmozart\\Console\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}

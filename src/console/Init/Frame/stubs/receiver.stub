@@ -1,0 +1,36 @@
+<?php
+// +----------------------------------------------------------------------
+// | xmzibi [ WE CAN DO IT MORE SIMPLE]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2016-2020 http://xmzibi.com/ All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: MrYe    <email：55585190@qq.com>
+// +----------------------------------------------------------------------
+
+class  {%module_class%}ModuleReceiver extends WeModuleReceiver
+{
+
+    /**
+     * App应用
+     * @var \og\http\App|mixed
+     */
+    protected $app;
+
+
+    public function __construct()
+    {
+        $this->app = include 'base.php';
+    }
+
+    /**
+     *
+     */
+    public function receive()
+    {
+
+    }
+
+
+}

@@ -1,0 +1,23 @@
+<?php
+// +----------------------------------------------------------------------
+// | zibi [ WE CAN DO IT MORE SIMPLE]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2016-2020 http://xmzibi.com/ All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: MrYe    <email：55585190@qq.com>
+// +----------------------------------------------------------------------
+namespace {%namespace%};
+
+use og\http\Request;
+
+class {%className%}
+{
+    public function handle(Request $request, \Closure $next)
+    {
+        //中间件逻辑代码...
+
+        return $next($request);
+    }
+}

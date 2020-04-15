@@ -1,0 +1,39 @@
+<?php
+// +----------------------------------------------------------------------
+// | xmzibi [ WE CAN DO IT MORE SIMPLE]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2016-2020 http://xmzibi.com/ All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: MrYe    <email：55585190@qq.com>
+// +----------------------------------------------------------------------
+
+class {%module_class%}ModuleProcessor extends WeModuleProcessor
+{
+    /**
+     * App应用
+     * @var \og\http\App|mixed
+     */
+    protected $app;
+
+
+    /**
+     * Og_testModuleProcessor constructor.
+     */
+    public function __construct()
+    {
+        $this->app = include 'base.php';
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function respond()
+    {
+
+    }
+
+
+}

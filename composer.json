@@ -1,0 +1,16 @@
+{
+    "name": "tinyframe/frame",
+    "description": "frame",
+    "authors": [
+        {
+            "name": "mrye",
+            "email": "55585190@qq.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "og\\": "src"
+        }
+    }
+}

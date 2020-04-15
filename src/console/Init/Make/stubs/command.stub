@@ -1,0 +1,41 @@
+<?php
+// +----------------------------------------------------------------------
+// | zibi [ WE CAN DO IT MORE SIMPLE]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2016-2020 http://xmzibi.com/ All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: MrYe    <email：55585190@qq.com>
+// +----------------------------------------------------------------------
+namespace {%namespace%};
+
+use og\console\Command;
+use og\console\Webmozart\Console\Api\Args\Args;
+use og\console\Webmozart\Console\Api\Args\Format\Argument;
+use og\console\Webmozart\Console\Api\IO\IO;
+
+class {%className%} extends Command
+{
+
+    public function configure()
+    {
+        //命令名称
+        $this->setName('{%className%}')
+             //命令描述
+             ->setDescription('{%className%} command description!')
+             //命令参数
+             ->addArgument('test', Argument::REQUIRED, 'Please enter the test command');
+    }
+
+    /**
+     * 处理命令
+     * @param Args $args
+     * @param IO $IO
+     */
+    public function handle(Args $args, IO $IO)
+    {
+        //显示信息
+        $this->showMessage('hello TinyFrame', 'info');
+    }
+}

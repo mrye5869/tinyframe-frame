@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+
+include_once 'vendor/autoload.php';
+
+/**
+ * 创建console对象
+ * @var $app \og\http\App
+ */
+$app = og\http\Container::getInstance()->make(og\http\App::class,
+    [
+        __DIR__.'/',
+        __DIR__.'/',
+        '',
+    ]
+);
+
+
+//执行命令
+\og\console\Console::run($app);
+

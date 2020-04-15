@@ -1,0 +1,29 @@
+<?php
+// +----------------------------------------------------------------------
+// | xmzibi [ WE CAN DO IT MORE SIMPLE]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2016-2020 http://xmzibi.com/ All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: MrYe    <email：55585190@qq.com>
+// +----------------------------------------------------------------------
+defined('IN_IA') or exit('Access Denied');
+
+define('MODULE_ROOT', (dirname(__FILE__)) . '/');
+define('MODULE_NAME','{%module_name%}');
+
+
+//加载
+require_once MODULE_ROOT.'vendor/autoload.php';
+
+//创建app应用对象
+$app = og\http\Container::getInstance()->make(og\http\App::class,
+    [
+        MODULE_ROOT,
+        IA_ROOT.'/',
+        MODULE_NAME,
+    ]
+);
+
+return $app;
