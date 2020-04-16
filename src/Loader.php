@@ -10,21 +10,30 @@
 // +----------------------------------------------------------------------
 namespace og;
 
+use og\facade\Env;
 class Loader
 {
 
     /**
+     * 注册框架内部加载
+     */
+    public static function autoloadRegister()
+    {
+        if(Env::get('module_path')) {
+            //注册命名空间
+            spl_autoload_register(array(self::class, 'autoload'));
+        }
+    }
+
+    /**
      * 加载
-     *
      * @param $classname
      */
-    public static function register($classname)
+    public static function autoload($classname)
     {
-        if(defined('MODULE_ROOT')) {
-            $classPath = MODULE_ROOT.str_replace('\\', '/', $classname).'.php';
-            return self::_include($classPath);
-        }
-        return false;
+        $classPath = Env::get('module_path').str_replace('\\', '/', $classname).'.php';
+
+        return self::_include($classPath);
     }
 
     /**

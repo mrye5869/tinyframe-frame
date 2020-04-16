@@ -138,13 +138,18 @@ class App extends Container
             $this->$abstract = $this->make($instance);
         }
 
-        Db::setConfig($this->config->get('database'));
-        Loader::_include($this->getFramePath() . 'common.php');
         if (is_file($this->getModulePath() . '.env')) {
+            //加载env
             $this->env->load($this->getModulePath() . '.env');
         }
-        Loader::loadFile($this->getModulePath() . $this->getNamespace());
+        //加载框架内部
+        Loader::autoloadRegister();
 
+        Db::setConfig($this->config->get('database'));
+
+        Loader::_include($this->getFramePath() . 'common.php');
+
+        Loader::loadFile($this->getModulePath() . $this->getNamespace());
 
         $this->addEvent();
     }
