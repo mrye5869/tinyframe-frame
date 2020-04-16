@@ -2,11 +2,9 @@
 // +----------------------------------------------------------------------
 // | zibi [ WE CAN DO IT MORE SIMPLE]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2016-2019 http://onegow.com All rights reserved.
+// | Copyright (c) 2016-2019 http://xmzibi.com All rights reserved.
 // +----------------------------------------------------------------------
 // | Author：MrYe       Email：55585190@qq.com
-// +----------------------------------------------------------------------
-// | 请求类
 // +----------------------------------------------------------------------
 namespace og\http;
 
@@ -253,7 +251,7 @@ class Request
         $this->_set();
 
         if ($value === '') {
-            return isset($this->GPC[$key]) ? $this->GPC : null;
+            return isset($this->GPC[$key]) ? $this->GPC[$key] : null;
         }
 
         return isetcookie($key, $value, $expire);
