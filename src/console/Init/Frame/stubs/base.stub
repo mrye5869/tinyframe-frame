@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------
 defined('IN_IA') or exit('Access Denied');
 
-define('MODULE_ROOT', (dirname(__FILE__)) . '/');
+define('MODULE_ROOT', __DIR__ . '/');
 define('MODULE_NAME','{%module_name%}');
 
 

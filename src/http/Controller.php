@@ -121,7 +121,7 @@ abstract class Controller
             $url = (strpos($url, '://') || 0 === strpos($url, '/')) ? $url : og_url($url, $query);
         }
 
-        return Response::create($url, 'Redirect', 200)->send();
+        redirect($url);
     }
 
     /**

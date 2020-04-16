@@ -80,6 +80,10 @@ class Event
                 $event = $this->bind[$event];
             }
 
+            if(!is_array($listeners)) {
+                $listeners = [$listeners];
+            }
+
             $this->listener[$event] = array_merge($this->listener[$event] ? $this->listener[$event] : [], $listeners);
         }
 
@@ -249,6 +253,7 @@ class Event
         $result    = [];
         $listeners = $this->listener[$event] ? $this->listener[$event] : [];
         $listeners = array_unique($listeners, SORT_REGULAR);
+
         foreach ($listeners as $key => $listener) {
             $result[$key] = $this->dispatch($listener, $params);
 

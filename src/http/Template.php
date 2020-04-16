@@ -54,7 +54,7 @@ class Template
     public function parse($html, $inmodule = false)
     {
         $html = preg_replace('/<!--{(.+?)}-->/s', '{$1}', $html);
-        $html = preg_replace('/{include\s+(.+?)}/', '<?php echo include_template($1); ?>', $html);
+        $html = preg_replace('/{include\s+(.+?)}/', '<?php echo view_content($1); ?>', $html);
         $html = preg_replace('/{template\s+(.+?)}/', '<?php (!empty($this) && $this instanceof WeModuleSite || '.intval($inmodule).') ? (include $this->template($1, TEMPLATE_INCLUDEPATH)) : (include template($1, TEMPLATE_INCLUDEPATH));?>', $html);
         $html = preg_replace('/{php\s+(.+?)}/', '<?php $1?>', $html);
         $html = preg_replace('/{if\s+(.+?)}/', '<?php if($1) { ?>', $html);

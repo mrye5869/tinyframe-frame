@@ -364,6 +364,6 @@ class App extends Container
      */
     public function getAppPath()
     {
-        return $this->getRootPath().$this->getNamespace().'/';
+        return $this->getModulePath().$this->getNamespace().'/';
     }
 }

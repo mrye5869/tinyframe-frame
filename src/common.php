@@ -266,18 +266,18 @@ if (!function_exists('view')) {
      */
     function view($template = '', $vars = [])
     {
-        return Response::create($template, 'View')->assign($vars)->send();
+        return Response::create($template, 'View')->assign($vars);
     }
 }
 
-if (!function_exists('include_template')) {
+if (!function_exists('view_content')) {
     /**
-     * 渲染视图
+     * 获取视图内容
      *
      * @param string $template
      * @return string
      */
-    function include_template($template = '')
+    function view_content($template = '')
     {
         return Response::create($template, 'View')->getContent();
     }
@@ -294,7 +294,7 @@ if (!function_exists('json')) {
      */
     function json($data = [], $code = 200, $header = [], $options = [])
     {
-        return Response::create($data, 'json', $code)->header($header)->options($options)->send();
+        return Response::create($data, 'json', $code)->header($header)->options($options);
     }
 }
 
@@ -309,7 +309,7 @@ if (!function_exists('xml')) {
      */
     function xml($data = [], $code = 200, $header = [], $options = [])
     {
-        return Response::create($data, 'Xml', $code)->header($header)->options($options)->send();
+        return Response::create($data, 'Xml', $code)->header($header)->options($options);
     }
 }
 
