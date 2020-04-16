@@ -99,6 +99,11 @@ class View extends Response
         }
         //实际模板路径
         $compile = $this->app->getRootPath() . "data/tpl/app/".$this->request->_W('template', 'template')."/" . $this->app->getModuleName() . "/" . strtolower($route['controller']) . "/" . $route['action'] . ".tpl.php";
+
+        if (!is_dir(dirname($compile))) {
+            og_mkdirs(dirname($compile), 0755, true);
+        }
+
         file_put_contents($compile, $html);
         //提取数组变量
         extract(self::$vars);

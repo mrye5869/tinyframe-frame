@@ -216,6 +216,7 @@ class Error
         } else {
             //写日志
             $this->log->error($errorMsg);
+
         }
     }
 
