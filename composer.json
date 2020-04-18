@@ -4,9 +4,12 @@
     "license": "Apache-2.0",
     "type": "project",
     "keywords": [
-        "framework",
         "tinyframe",
-        "w7"
+		"w7",
+		"framework",
+		"微擎插件框架",
+		"微擎框架",
+		"微擎"
     ],
     "authors": [
         {
