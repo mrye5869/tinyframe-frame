@@ -13,6 +13,10 @@ namespace og\http;
 use Closure;
 use Exception;
 use InvalidArgumentException;
+use og\cache\Cache;
+use og\cookie\Cookie;
+use og\error\Error;
+use og\session\Session;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
@@ -34,7 +38,21 @@ class Container
      * 绑定结果集
      * @var array
      */
-    protected $binds = [];
+    protected $binds = [
+        'app'       => App::class,
+        'env'       => Env::class,
+        'config'    => Config::class,
+        'cookie'    => Cookie::class,
+        'session'   => Session::class,
+        'cache'     => Cache::class,
+        'request'   => Request::class,
+        'log'       => Log::class,
+        'error'     => Error::class,
+        'route'     => Route::class,
+        'event'     => Event::class,
+        'middleware'=> Middleware::class,
+        'view'      => View::class,
+    ];
 
     /**
      * 对象列表
@@ -125,10 +143,31 @@ class Container
             }
             $this->instances[$abstract] = $concrete;
         } else {
+            $abstract = $this->getAlias($abstract);
+
             $this->binds[$abstract] = $concrete;
+
         }
 
         return $this;
+    }
+
+    /**
+     * 根据别名获取真实类名
+     * @param  string $abstract
+     * @return string
+     */
+    public function getAlias($abstract)
+    {
+        if (isset($this->binds[$abstract])) {
+            $bind = $this->binds[$abstract];
+
+            if (is_string($bind)) {
+                return $this->getAlias($bind);
+            }
+        }
+
+        return $abstract;
     }
 
     /**
@@ -142,20 +181,17 @@ class Container
     public function make($abstract, $vars = [] , $newInstance = false)
     {
 
+        $abstract = $this->getAlias($abstract);
+
         if (isset($this->instances[$abstract]) && !$newInstance) {
             return $this->instances[$abstract];
         }
 
-        if (isset($this->binds[$abstract])) {
-            $concrete = $this->binds[$abstract];
+        if (isset($this->binds[$abstract]) && $this->binds[$abstract] instanceof Closure) {
 
-            if ($concrete instanceof Closure) {
-                //闭包返回对象时
-                $object = $this->invokeFunction($concrete, $vars);
-            } else {
-                //初始化类，有进行绑定
-                return $this->make($concrete, $vars, $newInstance);
-            }
+            $concrete = $this->binds[$abstract];
+            //闭包返回对象时
+            $object = $this->invokeFunction($concrete, $vars);
 
         } else {
             //初始化类，并且未进行绑定
@@ -168,6 +204,56 @@ class Container
         }
 
         return $object;
+    }
+
+    /**
+     * 删除容器中的对象实例
+     * @access public
+     * @param string $name 类名或者标识
+     * @return void
+     */
+    public function delete($name)
+    {
+        $name = $this->getAlias($name);
+
+        if (isset($this->instances[$name])) {
+            unset($this->instances[$name]);
+        }
+    }
+
+    /**
+     * 判断容器中是否存在类及标识
+     * @access public
+     * @param string $abstract 类名或者标识
+     * @return bool
+     */
+    public function bound($abstract)
+    {
+        return isset($this->binds[$abstract]) || isset($this->instances[$abstract]);
+    }
+
+    /**
+     * 判断容器中是否存在类及标识
+     * @access public
+     * @param string $name 类名或者标识
+     * @return bool
+     */
+    public function has($name)
+    {
+        return $this->bound($name);
+    }
+
+    /**
+     * 判断容器中是否存在对象实例
+     * @access public
+     * @param string $abstract 类名或者标识
+     * @return bool
+     */
+    public function exists($abstract)
+    {
+        $abstract = $this->getAlias($abstract);
+
+        return isset($this->instances[$abstract]);
     }
 
     /**
@@ -340,6 +426,22 @@ class Container
         }
 
         return $result;
+    }
+
+
+    public function __set($name, $value)
+    {
+        $this->bind($name, $value);
+    }
+
+    public function __get($name)
+    {
+        return $this->get($name);
+    }
+
+    public function count()
+    {
+        return count($this->instances);
     }
 
 }

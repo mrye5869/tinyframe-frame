@@ -12,6 +12,8 @@
 use og\http\Container;
 use og\facade\Event;
 use og\facade\Env;
+use og\facade\Cache;
+use og\facade\Config;
 use og\http\Response;
 use og\Loader;
 
@@ -97,7 +99,7 @@ if (!function_exists('request')) {
      */
     function request()
     {
-        return container('og\http\Request');
+        return container('request');
     }
 }
 
@@ -109,19 +111,7 @@ if (!function_exists('route')) {
      */
     function route()
     {
-        return container('og\http\Route');
-    }
-}
-
-if (!function_exists('response')) {
-    /**
-     * 获取当前Request对象实例
-     *
-     * @return \og\http\Response
-     */
-    function response()
-    {
-        return container('og\http\Response');
+        return container('route');
     }
 }
 
@@ -199,21 +189,6 @@ if (!function_exists('W')) {
     }
 }
 
-if (!function_exists('config')) {
-    /**
-     * 获取微擎系统参数
-     *
-     * @param string $name
-     * @param null $default
-     * @return array|mixed|null
-     */
-    function config($name = '', $default = null)
-    {
-        return container('og\http\Config')->get($name, $default);
-    }
-
-}
-
 if (!function_exists('env')) {
     /**
      * 获取配置参数
@@ -227,6 +202,40 @@ if (!function_exists('env')) {
         return Env::get($name, $default);
     }
 
+}
+
+if (!function_exists('config')) {
+    /**
+     * 获取应用配置参数
+     *
+     * @param string $name
+     * @param null $default
+     * @return array|mixed|null
+     */
+    function config($name = '', $default = null)
+    {
+        return Config::get($name, $default);
+    }
+
+}
+
+if (!function_exists('cache')) {
+    /**
+     * 缓存操作
+     *
+     * @param string $key
+     * @param string $value
+     * @param int    $expire
+     * @return array|mixed|null
+     */
+    function cache($key, $value = '', $expire = 0)
+    {
+        if ($value === '') {
+            return Cache::get($key);
+        }
+
+        return Cache::set($key, $value, $expire);
+    }
 }
 
 if (!function_exists('og_url')) {

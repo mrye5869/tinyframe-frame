@@ -49,9 +49,9 @@ abstract class Controller
      */
     public function __construct(App $app, Request $request, Response $response)
     {
-       $this->app = $app;
-       $this->request = $request;
-       $this->response = $response;
+        $this->app = $app;
+        $this->request = $request;
+        $this->response = $response;
         //初始化模板路径
         $this->assign('addon_root_path', '/addons/' . $this->request->_W('current_module.name') . '/');
         $this->assign('addon_static_path', '/addons/' . $this->request->_W('current_module.name') . '/static/');

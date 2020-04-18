@@ -21,6 +21,6 @@ class Log extends Facade
 
     protected static function getFacadeClass()
     {
-        return 'og\http\Log';
+        return 'log';
     }
 }

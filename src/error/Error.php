@@ -6,7 +6,7 @@
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: mrye  55585190@qq.com
+// | Author: MrYe  <55585190@qq.com>
 // +----------------------------------------------------------------------
 namespace og\error;
 
@@ -14,7 +14,6 @@ use og\http\App;
 use og\http\Log;
 use og\http\Request;
 use og\http\Response;
-
 
 class Error
 {
@@ -24,6 +23,10 @@ class Error
      */
     protected $app;
 
+    /**
+     * request对象
+     * @var Request
+     */
     protected $request;
 
     /**
@@ -59,7 +62,6 @@ class Error
         $this->app = $app;
         $this->request = $request;
         $this->log = $log;
-        $this->register();
     }
 
     /**
@@ -68,7 +70,7 @@ class Error
      * @access public
      * @return void
      */
-    protected function register()
+    public function register()
     {
         if($this->app->isDebug()) {
             error_reporting(E_ALL ^ E_NOTICE);
@@ -92,12 +94,8 @@ class Error
         if (!is_object($e)) {
             return true;
         }
-        $this->showError([
-            'errno'     => 'Exception('.self::getErrno($e->getCode()).')',
-            'msg'       => $e->getMessage(),
-            'errfile'   => $e->getFile(),
-            'errline'   => $e->getLine(),
-        ]);
+
+        $this->showError($e);
     }
 
     /**
@@ -116,12 +114,14 @@ class Error
         if(!self::isHandle($errno)) {
             return true;
         }
-        $this->showError([
-            'errno'     => self::getErrno($errno),
-            'msg'       => $errstr,
-            'errfile'   => $errfile,
-            'errline'   => $errline,
-        ]);
+
+        try {
+           throw new \Exception($errno, $errstr);
+
+        } catch (\Exception $exception) {
+
+            $this->showError($exception);
+        }
     }
 
     /**
@@ -179,45 +179,106 @@ class Error
     }
 
     /**
-     * 展示错误信息
-     *
-     * @param array $errorMsg
-     * @param bool $die
+     * @param \Exception|\Throwable $exception
+     * @return array
      */
-    protected function showError($errorMsg = [])
+    protected function  convertException($exception)
     {
-        if($this->app->isDebug()) {
+        //获取调试模式错误信息
+        $traces = [];
+        $nextException = $exception;
+        do {
+            $traces[] = [
+                'name'    => get_class($nextException),
+                'file'    => $nextException->getFile(),
+                'line'    => $nextException->getLine(),
+                'code'    => $nextException->getCode(),
+                'message' => $nextException->getMessage(),
+                'trace'   => $nextException->getTrace(),
+            ];
+        } while ($nextException = $nextException->getPrevious());
+        $data = [
+            'code'    => $exception->getCode(),
+            'message' => $exception->getMessage(),
+            'traces'  => $traces,
+            'datas'   => [],
+            'tables'  => [
+                'GPC Data'              => $this->request->input(),
+                'Files'                 => $this->request->file(),
+                'W'                     => $this->request->_W(),
+            ],
+        ];
 
+        return $data;
+    }
+
+    /**
+     * 展示错误信息
+     * @param \Exception|\Throwable $exception
+     */
+    protected function showError($exception)
+    {
+
+        if(is_callable([$exception, 'getStatusCode'])) {
+            $httpCode =   $exception->getStatusCode();
+
+        } else {
+
+            $httpCode = 500;
+        }
+        http_response_code($httpCode);
+
+        if($this->app->isDebug()) {
+            //调试模式
             if(PHP_SAPI == 'cli') {
-                $tips = PHP_EOL;
-                foreach ($errorMsg as $key => $val) {
-                    if(is_array($val) || is_object($val)) {
-                        $val = var_export($val, true);
-                    }
-                    $tips .= $key.':'.$val.PHP_EOL;
-                }
-                //命令行输出
-                $this->cliErrorOut($tips);
+                //cli模式
+                $br = PHP_EOL;
+                $tips = <<<EOF
+    {$br}
+    message:{$exception->getMessage()}
+    file:{$exception->getFile()}
+    line:{$exception->getLine()}
+    {$br}
+EOF;
+                //获取命令行标准输出
+                $content = $this->cliErrorOut($tips);
 
             } else {
-                //展示错误信
-                $tips = '';
-                foreach ($errorMsg as $key => $val) {
-                    if(is_array($val) || is_object($val)) {
-                        $val = var_export($val, true);
-                    }
-                    $tips .= $key.'：<span style="color: red;">'.$val.'</span><hr/>';
-                }
-                $errors = '<title>页面发生错误</title><body><div style="width: 50%;margin: 0 auto;margin-top: 100px;"><h2 style="text-align: center;">错误信息：</h2>'.$tips.'</div></body>';
-                //错误响应
-                return Response::create($errors, 'html', 500)->send();
+                //普通模式
+                $data = $this->convertException($exception);
+
+                $content = Response::create('view', 'View', $httpCode)->assign($data)->viewCompile(
+                    __DIR__.'/view/exception.html',
+                    $this->app->getRootPath() ."data/tpl/common/".$this->app->getModuleName()."/404.exception.tpl.php");
+
             }
 
         } else {
+
+            //普通模式
+            $data = [
+                'code'      => $exception->getCode(),
+                'message'   => $exception->getMessage(),
+                'line'      => $exception->getLine(),
+            ];
             //写日志
-            $this->log->error($errorMsg);
+            $this->log->error($data);
+            //模板
+            $tpl = $this->app->config->get('app.error.show_error_tpl');
+            if(empty($tpl) || !is_file($tpl)) {
+                $tpl =  __DIR__.'/view/404.html';
+            }
+            //错误信息
+            $data['message'] = $this->app->config->get('app.error.show_error_msg', $data['message']);
+            $content = Response::create('view', 'View', $httpCode)->assign($data)->viewCompile(
+                $tpl,
+                $this->app->getRootPath() ."data/tpl/common/".$this->app->getModuleName()."/404.tpl.php");
 
         }
+
+        echo $content;
+        exit();
+
     }
 
     /**
@@ -226,14 +287,16 @@ class Error
      */
     public function cliErrorOut($text)
     {
+
         if($this->request->getOs() == 'linux') {
-            printf("\033[31;31m%s\033[0m", $text.PHP_EOL);
+            $echo = sprintf("\033[31;31m%s\033[0m", $text);
 
         } else {
-            echo $text;
+
+            $echo = $text;
         }
 
-        exit();
+        return $echo.PHP_EOL;
     }
 
 }

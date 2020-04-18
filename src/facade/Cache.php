@@ -12,13 +12,13 @@ namespace og\facade;
 
 use og\http\Facade;
 /**
- * @see \og\http\Config
- * @mixin \og\http\Config
+ * @see \og\cache\Cache
+ * @mixin \og\cache\Cache
  */
-class Config extends Facade
+class Cache extends Facade
 {
     protected static function getFacadeClass()
     {
-        return 'config';
+        return 'cache';
     }
 }

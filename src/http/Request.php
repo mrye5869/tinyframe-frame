@@ -8,7 +8,10 @@
 // +----------------------------------------------------------------------
 namespace og\http;
 
+use og\cookie\Cookie;
+use og\http\filesystem\UploadedFile;
 use og\session\Session;
+
 class Request
 {
 
@@ -16,25 +19,31 @@ class Request
      * 请求参数
      * @var array
      */
-    protected  $GPC = [];
+    protected  $GPC;
 
     /**
      * 微擎配置参数
      * @var array
      */
-    protected  $W = [];
+    protected  $W;
 
     /**
      * 系统参数
      * @var array
      */
-    protected  $server = [];
+    protected  $server;
 
     /**
      * 头部信息
      * @var array
      */
-    protected  $header = [];
+    protected  $header;
+
+    /**
+     * 文件
+     * @var array
+     */
+    protected $files;
 
     /**
      * 请求方式
@@ -54,13 +63,54 @@ class Request
     ];
 
     /**
+     * session对象
+     * @var Session
+     */
+    protected $session;
+
+    /**
+     * cookie对象
+     * @var Cookie
+     */
+    protected $cookie;
+
+
+    /**
      * 构造
-     *
      * Request constructor.
      */
-    public function __construct()
+    public function __construct(Session $session, Cookie $cookie)
     {
-        $this->_set();
+        global $_W,$_GPC;
+        //微擎参数
+        $this->W = &$_W;
+        $this->GPC = &$_GPC;
+        $this->server = $_SERVER;
+
+        $header = [];
+        if (function_exists('apache_request_headers') && $result = apache_request_headers()) {
+            $header = $result;
+        } else {
+            $server = $this->server();
+            foreach ($server as $key => $val) {
+                if (0 === strpos($key, 'HTTP_')) {
+                    $key          = str_replace('_', '-', strtolower(substr($key, 5)));
+                    $header[$key] = $val;
+                }
+            }
+            if (isset($server['CONTENT_TYPE'])) {
+                $header['content-type'] = $server['CONTENT_TYPE'];
+            }
+            if (isset($server['CONTENT_LENGTH'])) {
+                $header['content-length'] = $server['CONTENT_LENGTH'];
+            }
+        }
+        $this->header = array_change_key_case($header);
+        $this->files = $_FILES;
+
+        $this->session = $session;
+        $this->cookie = $cookie;
+
     }
 
     /**
@@ -73,10 +123,6 @@ class Request
      */
     public function server($name = '', $default = null)
     {
-        if(empty($this->server)) {
-            //执行过滤或其它处理
-            $this->server = $_SERVER;
-        }
         if (empty($name)) {
             return $this->server;
         } else {
@@ -95,8 +141,6 @@ class Request
      */
     public function _W($name = '', $default = null)
     {
-        $this->_set();
-
         if (empty($name)) {
             return $this->W;
         }
@@ -125,8 +169,6 @@ class Request
      */
     public function input($name = '', $default = null, $filter = '')
     {
-        $this->_set();
-
         if ($name === 'post') {
             return $_POST;
         } elseif ($name === 'get') {
@@ -163,28 +205,6 @@ class Request
      */
     public function header($name = '', $default = null)
     {
-        if (empty($this->header)) {
-            $header = [];
-            if (function_exists('apache_request_headers') && $result = apache_request_headers()) {
-                $header = $result;
-            } else {
-                $server = $this->server();
-                foreach ($server as $key => $val) {
-                    if (0 === strpos($key, 'HTTP_')) {
-                        $key          = str_replace('_', '-', strtolower(substr($key, 5)));
-                        $header[$key] = $val;
-                    }
-                }
-                if (isset($server['CONTENT_TYPE'])) {
-                    $header['content-type'] = $server['CONTENT_TYPE'];
-                }
-                if (isset($server['CONTENT_LENGTH'])) {
-                    $header['content-length'] = $server['CONTENT_LENGTH'];
-                }
-            }
-            $this->header = array_change_key_case($header);
-        }
-
         if ('' === $name) {
             return $this->header;
         }
@@ -192,6 +212,96 @@ class Request
         $name = str_replace('_', '-', strtolower($name));
 
         return isset($this->header[$name]) ? $this->header[$name] : $default;
+    }
+
+    /**
+     * 获取上传的文件信息
+     * @access public
+     * @param  string $name 名称
+     * @return null|array|UploadedFile
+     */
+    public function file($name = '')
+    {
+        $files = $this->files;
+        if (!empty($files)) {
+
+            if (strpos($name, '.')) {
+                list($name, $sub) = explode('.', $name);
+            }
+
+            // 处理上传文件
+            $array = $this->dealUploadFile($files, $name);
+
+            if ('' === $name) {
+                // 获取全部文件
+                return $array;
+            } elseif (isset($sub) && isset($array[$name][$sub])) {
+                return $array[$name][$sub];
+            } elseif (isset($array[$name])) {
+                return $array[$name];
+            }
+        }
+    }
+
+    protected function dealUploadFile($files, $name)
+    {
+        $array = [];
+        foreach ($files as $key => $file) {
+            if (is_array($file['name'])) {
+                $item  = [];
+                $keys  = array_keys($file);
+                $count = count($file['name']);
+
+                for ($i = 0; $i < $count; $i++) {
+                    if ($file['error'][$i] > 0) {
+                        if ($name == $key) {
+                            $this->throwUploadFileError($file['error'][$i]);
+                        } else {
+                            continue;
+                        }
+                    }
+
+                    $temp['key'] = $key;
+
+                    foreach ($keys as $_key) {
+                        $temp[$_key] = $file[$_key][$i];
+                    }
+
+                    $item[] = new UploadedFile($temp['tmp_name'], $temp['name'], $temp['type'], $temp['error']);
+                }
+
+                $array[$key] = $item;
+            } else {
+
+                if ($file['error'] > 0) {
+                    if ($key == $name) {
+                        $this->throwUploadFileError($file['error']);
+                    } else {
+                        continue;
+                    }
+                }
+
+                $array[$key] = new UploadedFile($file['tmp_name'], $file['name'], $file['type'], $file['error']);
+
+            }
+        }
+
+        return $array;
+    }
+
+    protected function throwUploadFileError($error)
+    {
+        static $fileUploadErrors = [
+            1 => 'upload File size exceeds the maximum value',
+            2 => 'upload File size exceeds the maximum value',
+            3 => 'only the portion of file is uploaded',
+            4 => 'no file to uploaded',
+            6 => 'upload temp dir not found',
+            7 => 'file write error',
+        ];
+
+        $msg = $fileUploadErrors[$error];
+        throw new \Exception($msg, $error);
     }
 
     /**
@@ -231,10 +341,10 @@ class Request
     public function session($key, $value = '', $expire = 0)
     {
         if ($value === '') {
-            return Session::get($key);
+            return $this->session->get($key);
         }
 
-        return Session::set($key, $value, $expire);
+        return $this->session->set($key, $value, $expire);
     }
 
     /**
@@ -248,13 +358,12 @@ class Request
      */
     public function cookie($key, $value = '', $expire = 0)
     {
-        $this->_set();
 
         if ($value === '') {
-            return isset($this->GPC[$key]) ? $this->GPC[$key] : null;
+            return $this->cookie->get($key);
         }
 
-        return isetcookie($key, $value, $expire);
+        return $this->cookie->set($key, $value, $expire);
     }
 
     /**
@@ -536,17 +645,5 @@ class Request
 
         return false;
     }
-
-    /**
-     * 重置参数
-     *
-     */
-    protected function _set()
-    {
-        global $_W,$_GPC;
-        $this->W = $_W;
-        $this->GPC = $_GPC;
-    }
-
 
 }

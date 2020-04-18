@@ -6,64 +6,43 @@
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: MrYe    email：55585190@qq.com          应用
+// | Author: MrYe    <email：55585190@qq.com>
 // +----------------------------------------------------------------------
 namespace og\http;
 
+use og\cache\Cache;
+use og\cookie\Cookie;
 use og\error\Error;
 use og\error\HttpException;
 use og\Loader;
+use og\session\Session;
 use ReflectionMethod;
 use ReflectionClass;
 use og\db\Db;
 
+
 /**
- * Class App
- * @package og\http
+ * App
+ * @property  Env           $env
+ * @property  Config        $config
+ * @property  Cookie        $cookie
+ * @property  Session       $session
+ * @property  Cache         $cache
+ * @property  Request       $request
+ * @property  Log           $log
+ * @property  Error         $error
+ * @property  Route         $route
+ * @property  Event         $event
+ * @property  Middleware    $middleware
+ * @property  View          $view
  */
 class App extends Container
 {
     /**
-     * 请求对象
-     * @var Request
+     * 版本等级
+     * @var string
      */
-    protected $request;
-
-    /**
-     * 请求响应对象
-     * @var Route
-     */
-    protected $route;
-
-    /**
-     * env配置对象
-     * @var Env
-     */
-    protected $env;
-
-    /**
-     * 配置对象
-     * @var Config
-     */
-    protected $config;
-
-    /**
-     * 日志对象
-     * @var Log
-     */
-    protected $log;
-
-    /**
-     * 中间件对象
-     * @var Middleware
-     */
-    protected $middleware;
-
-    /**
-     * 事件对象
-     * @var Event
-     */
-    protected $event;
+    protected $version = '1.0';
 
     /**
      * 模块根目录
@@ -97,23 +76,6 @@ class App extends Container
 
 
     /**
-     * 容器绑定标识
-     * @var array
-     */
-    protected $bind = [
-        'env'       => Env::class,
-        'request'   => Request::class,
-        'config'    => Config::class,
-        'log'       => Log::class,
-        'error'     => Error::class,
-        'route'     => Route::class,
-        'event'     => Event::class,
-        'middleware'=> Middleware::class,
-        'Template'  => Template::class,
-    ];
-
-
-    /**
      * 初始化
      * App constructor.
      * @param $module_path
@@ -125,18 +87,14 @@ class App extends Container
     {
 
         $this->setModulePath($modulePath)->setRootPath($rootPath)->setModuleName($moduleName);
-        $this->framePath = dirname(__DIR__) . '/';
 
         //设置容器实例
         static::setInstance($this);
         //绑定
         $this->instance(self::class, $this);
         $this->instance(Container::class, $this);
-
-        //批量绑定
-        foreach ($this->bind as $abstract => $instance) {
-            $this->$abstract = $this->make($instance);
-        }
+        //错误注册
+        $this->error->register();
 
         if (is_file($this->getModulePath() . '.env')) {
             //加载env
@@ -355,7 +313,7 @@ class App extends Container
      */
     public function getFramePath()
     {
-        return $this->framePath;
+        return empty($this->framePath) ?  $this->framePath = dirname(__DIR__) . '/' : $this->framePath;
     }
 
     /**
@@ -365,5 +323,14 @@ class App extends Container
     public function getAppPath()
     {
         return $this->getModulePath().$this->getNamespace().'/';
+    }
+
+    /**
+     * 获取框架版本
+     * @return string
+     */
+    public function getVersion()
+    {
+        return $this->version;
     }
 }

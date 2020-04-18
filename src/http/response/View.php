@@ -10,11 +10,12 @@
 // +----------------------------------------------------------------------
 namespace og\http\response;
 
+use og\http\Config;
 use og\http\App;
 use og\http\Request;
 use og\http\Response;
 use og\http\Route;
-use og\http\Template;
+use og\http\View as Views;
 use og\error\HttpException;
 
 class View extends Response
@@ -39,9 +40,15 @@ class View extends Response
 
     /**
      * 模板对象
-     * @var Template
+     * @var View
      */
-    protected $template;
+    protected $views;
+
+    /**
+     * 配置对象
+     * @var Config
+     */
+    protected $config;
 
     /**
      * 模板数据
@@ -56,12 +63,13 @@ class View extends Response
     protected $contentType = 'text/html';
 
 
-    public function __construct(App $app, Request $request, Route $route, Template $template, $data = '', $code = 200)
+    public function __construct(App $app, Request $request, Route $route, Views $views, Config $config, $data = '', $code = 200)
     {
         $this->app = $app;
         $this->request = $request;
         $this->route = $route;
-        $this->template = $template;
+        $this->views = $views;
+        $this->config = $config;
 
         $this->init($data, $code);
     }
@@ -75,32 +83,62 @@ class View extends Response
     protected function output($path)
     {
         $route = $this->route->restructureRoute($path, '/');
-        $source = $this->app->getModulePath() . "template/" . strtolower($route['module']) . "/" . strtolower($route['controller']) . "/" . $route['action'] . ".html";
+        //拼接资源路径
+        $source =   $this->app->getModulePath()
+                    .$this->config->get('app.view_dir_name', 'view') ."/"
+                    .strtolower($route['module']) . "/"
+                    .strtolower($route['controller']) . "/"
+                    .$route['action'] . ".html";
+
+        //编译模板路径
+        $compile =  $this->app->getRootPath()
+                    ."data/tpl/".$this->route->getSysModule()."/"
+                    .$this->app->getModuleName() . "/"
+                    .strtolower($route['controller']) . "/"
+                    .$route['action'] . ".tpl.php";
+
+       return $this->viewCompile($source, $compile);
+    }
+
+    /**
+     * 模板编译
+     * @param $source
+     * @param $compile
+     * @return false|string
+     */
+    public function viewCompile($source, $compile)
+    {
+
         if(!is_file($source)) {
-            throw new HttpException(404, 'template not exists:' . $source);
+            throw new HttpException(404, 'view not exists:' . $source);
         }
+
         $html = file_get_contents($source);
-        $html = $this->template->parse($html);
+        $html = $this->views->parse($html);
+
         if($this->route->getSysModule() == 'web') {
             //web端
             if (!empty($this->request->_W('setting.remote.type'))) {
                 $html = str_replace('</body>', "<script>$(function(){\$('img').attr('onerror', '').on('error', function(){if (!\$(this).data('check-src') && (this.src.indexOf('http://') > -1 || this.src.indexOf('https://') > -1)) {this.src = this.src.indexOf('{$this->request->_W('attachurl_local')}') == -1 ? this.src.replace('{$this->request->_W('attachurl_remote')}', '{$this->request->_W('attachurl_local')}') : this.src.replace('{$this->request->_W('attachurl_local')}', '{$this->request->_W('attachurl_remote')}');\$(this).data('check-src', true);}});});</script></body>", $html);
             }
             $html = "<?php defined('IN_IA') or exit('Access Denied');?>" . $html;
+
         } else {
             //app端
             $business_stat_script = "</script><script type=\"text/javascript\" src=\"{$this->request->_W('siteroot')}app/index.php?i={$this->request->_W('uniacid')}&c=utility&a=visit&do=showjs&m={$this->request->_W('current_module.name')}\">";
             if (!empty($GLOBALS['_W']['setting']['remote']['type'])) {
                 $html = str_replace('</body>', "<script>var imgs = document.getElementsByTagName('img');for(var i=0, len=imgs.length; i < len; i++){imgs[i].onerror = function() {if (!this.getAttribute('check-src') && (this.src.indexOf('http://') > -1 || this.src.indexOf('https://') > -1)) {this.src = this.src.indexOf('{$this->request->_W('attachurl_local')}') == -1 ? this.src.replace('{$GLOBALS['_W']['attachurl_remote']}', '{$this->request->_W('attachurl_local')}') : this.src.replace('{$GLOBALS['_W']['attachurl_local']}', '{$this->request->_W('attachurl_remote')}');this.setAttribute('check-src', true);}}};{$business_stat_script}</script></body>", $html);
+
             } else {
                 $html = str_replace('</body>', "<script>;{$business_stat_script}</script></body>", $html);
+
             }
             $html = "<?php defined('IN_IA') or exit('Access Denied');?>" . $html;
+
         }
-        //实际模板路径
-        $compile = $this->app->getRootPath() . "data/tpl/app/".$this->request->_W('template', 'template')."/" . $this->app->getModuleName() . "/" . strtolower($route['controller']) . "/" . $route['action'] . ".tpl.php";
 
         if (!is_dir(dirname($compile))) {
+
             og_mkdirs(dirname($compile), 0755, true);
         }
 

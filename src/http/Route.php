@@ -122,7 +122,7 @@ class Route
         $query['do'] = $route['module']. $delimiter .$route['controller'] . $delimiter . $route['action'];
         $query['m'] = isset($query['m']) ? $query['m'] : $this->app->getModuleName();
 
-        if ($route['sys_module'] == 'web') {
+        if ($this->getSysModule() == 'web') {
             $url = str_replace('./', '/web/', wurl('site/entry', $query));
         } else {
             $url = str_replace('./', '/app/', murl('entry', $query));
@@ -265,7 +265,7 @@ class Route
             $script_name_arr = explode('/', $script_name);
             $this->sysModule = isset($script_name_arr[1]) ? $script_name_arr[1] : 'web';
             if($this->sysModule != 'web') {
-                $this->sysModule = 'mobile';
+                $this->sysModule = 'app';
             }
         }
 

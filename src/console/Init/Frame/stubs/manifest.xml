@@ -17,18 +17,18 @@
 		</handles>
 		<rule embed="false" />
 		<card embed="false" />
-	
+
 	</platform>
 	<bindings>
 		<cover>
-			<entry title="主页入口" do="#" state="" direct="false" />
+			<entry title="主页入口" do="mobile.Index.index" state="" direct="false" />
 		</cover>
 		<menu>
 		</menu>
 	</bindings>
 	<permissions>
 	</permissions>
-	<install><![CDATA[]]></install>
-	<uninstall><![CDATA[]]></uninstall>
-	<upgrade><![CDATA[]]></upgrade>
+	<install><![CDATA[install.php]]></install>
+	<uninstall><![CDATA[uninstall.php]]></uninstall>
+	<upgrade><![CDATA[upgrade.php]]></upgrade>
 </manifest>

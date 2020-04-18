@@ -2,16 +2,21 @@
 // +----------------------------------------------------------------------
 // | zibi [ WE CAN DO IT MORE SIMPLE]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2016-2020 http://xmzibi.com/ All rights reserved.
+// | Copyright (c) 2016-2019 http://xmzibi.com All rights reserved.
 // +----------------------------------------------------------------------
-// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-// +----------------------------------------------------------------------
-// | Author: mrye
+// | Author：MrYe       <email：55585190@qq.com>
 // +----------------------------------------------------------------------
 namespace og\session;
 
 class Session
 {
+    /**
+     * Session constructor.
+     */
+    public function __construct()
+    {
+        $this->start();
+    }
 
     /**
      * 设置session
@@ -20,21 +25,24 @@ class Session
      * @param Mixed  $data   session data
      * @param Int    $expire 超时时间(秒)
      */
-    public static function set($name, $data, $expire = 0)
+    public function set($name, $data, $expire = 0)
     {
-        self::start();
+
         if($expire == 0) {
             //无时间限制
             $_SESSION[$name] = $data;
+
         } elseif($data === null) {
             //清除session
-            self::clear($name);
+            $this->clear($name);
+
         } else {
             //有时间限制
             $session_data = array();
             $session_data['data'] = $data;
             $session_data['expire'] = time() + $expire;
             $_SESSION[$name] = $session_data;
+
         }
 
         return true;
@@ -47,18 +55,21 @@ class Session
      * @param $name
      * @return null
      */
-    public static function get($name)
+    public function get($name)
     {
-        self::start();
+
         if(isset($_SESSION[$name])) {
+            //存在
             if (!empty($_SESSION[$name]['expire'])) {
                 if ($_SESSION[$name]['expire'] > time()) {
                     return $_SESSION[$name]['data'];
                 } else {
-                    self::clear($name);
+                   $this->clear($name);
                 }
+
             } else {
                 return $_SESSION[$name];
+
             }
         }
 
@@ -66,14 +77,16 @@ class Session
     }
 
     /**
-     * 开启session
+     * session开启
      */
-    private static function start()
+    protected function start()
     {
-        if (PHP_SESSION_ACTIVE != session_status())
-        {
-            session_start();
+        if (PHP_SESSION_ACTIVE != session_status()) {
+
+            return session_start();
         }
+
+        return true;
     }
 
     /**
@@ -81,7 +94,7 @@ class Session
      *
      * @param $name
      */
-    private static function clear($name)
+    protected function clear($name)
     {
         unset($_SESSION[$name]);
     }

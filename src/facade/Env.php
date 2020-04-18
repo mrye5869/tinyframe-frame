@@ -19,6 +19,6 @@ class Env extends Facade
 {
     protected static function getFacadeClass()
     {
-        return 'og\http\Env';
+        return 'env';
     }
 }

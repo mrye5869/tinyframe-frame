@@ -33,6 +33,16 @@ class FrameInit extends Command
      */
     public function handle(Args $args)
     {
+        if(!$this->testWrite(App::getRootPath().'data')) {
+            $this->showMessage( 'data directory does not have permission!', 'error');
+            return false;
+        }
+
+        if(!$this->testWrite(App::getModulePath())) {
+            $this->showMessage( 'project directory does not have permission!', 'error');
+            return false;
+        }
+
         if(is_file(App::getModulePath().'site.php')) {
             $this->showMessage( 'project already exists!', 'error');
             return false;
@@ -165,5 +175,29 @@ class FrameInit extends Command
         }
 
         return $version;
+    }
+
+    /**
+     * 测试读写
+     *
+     * @param string $dir
+     *
+     * @return bool
+     */
+    protected function testWrite($dir)
+    {
+
+        $tfile = "_test.txt";
+        $fp = @fopen($dir . "/" . $tfile, "w");
+        if (!$fp) {
+            return false;
+        }
+        fclose($fp);
+        $rs = @unlink($dir . "/" . $tfile);
+        if ($rs) {
+            return true;
+        }
+
+        return false;
     }
 }
