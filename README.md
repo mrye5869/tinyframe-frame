@@ -1,7 +1,7 @@
 
 <p align="center">
-    <a href="https://github.com/swoft-cloud/swoft" target="_blank">
-        <img src="http://qiniu.mrye.xin/81c7fb680072e487af7c623cba5ad29.png" alt="swoft" />
+    <a href="https://github.com/mrye5869/tinyframe" target="_blank">
+        <img src="http://qiniu.mrye.xin/81c7fb680072e487af7c623cba5ad29.png" alt="TinyFrame" />
     </a>
 </p>
 
