@@ -54,7 +54,7 @@ abstract class Controller
         $this->response = $response;
         //初始化模板路径
         $this->assign('addon_root_path', '/addons/' . $this->request->_W('current_module.name') . '/');
-        $this->assign('addon_static_path', '/addons/' . $this->request->_W('current_module.name') . '/static/');
+        $this->assign('addon_public_path', '/addons/' . $this->request->_W('current_module.name') . '/public/');
         $this->assign('_W', $this->request->_W());
         //初始化
         $this->__init();

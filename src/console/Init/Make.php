@@ -66,7 +66,7 @@ abstract class Make extends Command
         $stub = file_get_contents($this->getStub());
 
         return str_replace(['{%className%}', '{%namespace%}'], [
-            $commandNames['className'],
+            ucfirst($commandNames['className']),
             $this->getNamespace($commandNames),
         ], $stub);
     }
@@ -124,13 +124,13 @@ abstract class Make extends Command
             $moduleArr = explode($delimiter, $className);
             return [
                 'module'    => $moduleArr[0],
-                'className' => ucfirst($moduleArr[1]),
+                'className' => $moduleArr[1],
             ];
 
         } else {
 
             return [
-                'className' => ucfirst($className),
+                'className' => $className,
                 'module'    => 'common',
             ];
         }

@@ -31,7 +31,7 @@ class Event extends Make
 
     protected function getPath($commandNames)
     {
-        return Config::get('event.create_path'). DIRECTORY_SEPARATOR . $commandNames['className']. '.php';
+        return Config::get('event.create_path'). DIRECTORY_SEPARATOR . ucfirst($commandNames['className']). '.php';
     }
 
     protected function getStub()

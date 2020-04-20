@@ -36,7 +36,7 @@ class Model extends Make
 
     public function getPath($commandNames)
     {
-        return Env::get('app_path').(isset($commandNames['module']) ? $commandNames['module'] : 'common').'/model/'.$commandNames['className'].'.php';
+        return Env::get('app_path').(isset($commandNames['module']) ? $commandNames['module'] : 'common').'/model/'.ucfirst($commandNames['className']).'.php';
     }
 
     protected function getStub()

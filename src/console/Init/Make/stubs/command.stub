@@ -21,11 +21,11 @@ class {%className%} extends Command
     public function configure()
     {
         //命令名称
-        $this->setName('{%className%}')
+        $this->setName('{%command%}')
              //命令描述
-             ->setDescription('{%className%} command description!')
+             ->setDescription('{%command%} command description!')
              //命令参数
-             ->addArgument('test', Argument::REQUIRED, 'Please enter the test command');
+             ->addArgument('{%arg%}', Argument::OPTIONAL, 'Please enter the test command');
     }
 
     /**
@@ -35,7 +35,10 @@ class {%className%} extends Command
      */
     public function handle(Args $args, IO $IO)
     {
+        //获取参数
+        $arg = $args->getArgument('{%arg%}');
+        $arg = !empty($arg) ? $arg : 'tinyFrame';
         //显示信息
-        $this->showMessage('hello TinyFrame', 'info');
+        $this->showMessage('hello '.$arg, 'info');
     }
 }

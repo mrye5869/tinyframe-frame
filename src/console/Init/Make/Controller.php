@@ -36,7 +36,7 @@ class Controller extends Make
 
     public function getPath($commandNames)
     {
-        return Env::get('app_path').(isset($commandNames['module']) ? $commandNames['module'] : 'common').'/controller/'.$commandNames['className'].'.php';
+        return Env::get('app_path').(isset($commandNames['module']) ? $commandNames['module'] : 'common').'/controller/'.ucfirst($commandNames['className']).'.php';
     }
 
     protected function getStub()

@@ -92,10 +92,10 @@ class View extends Response
 
         //编译模板路径
         $compile =  $this->app->getRootPath()
-                    ."data/tpl/".$this->route->getSysModule()."/"
-                    .$this->app->getModuleName() . "/"
+                    ."data/tpl/".strtolower($this->route->getSysModule())."/"
+                    .strtolower($this->app->getModuleName()) . "/"
                     .strtolower($route['controller']) . "/"
-                    .$route['action'] . ".tpl.php";
+                    .strtolower($route['action']) . ".tpl.php";
 
        return $this->viewCompile($source, $compile);
     }

@@ -22,7 +22,8 @@ class Command extends Make
     public function configure()
     {
         $this->setDescription('Create a new command class')
-            ->addArgument('name', Argument::REQUIRED, 'Please enter the command class');
+            ->addArgument('name', Argument::REQUIRED, 'Please enter the command class')
+            ->addArgument('command', Argument::OPTIONAL, 'Please enter the command');
     }
 
     protected function getNamespace()
@@ -30,9 +31,23 @@ class Command extends Make
         return Config::get('console.namespace');
     }
 
+    protected function buildClass($commandNames)
+    {
+        $stub = file_get_contents($this->getStub());
+
+        $command = $this->args->getArgument('command') ? $this->args->getArgument('command') : $commandNames['className'];
+
+        return str_replace(['{%className%}', '{%command%}', '{%arg%}', '{%namespace%}'], [
+            ucfirst($commandNames['className']),
+            $command ,
+            'arg',
+            $this->getNamespace($commandNames),
+        ], $stub);
+    }
+
     protected function getPath($commandNames)
     {
-        return Config::get('console.create_path'). DIRECTORY_SEPARATOR . $commandNames['className']. '.php';
+        return Config::get('console.create_path'). DIRECTORY_SEPARATOR .ucfirst( $commandNames['className']). '.php';
     }
 
     protected function getStub()
