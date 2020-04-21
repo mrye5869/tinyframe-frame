@@ -12,7 +12,7 @@
 class {%module_class%}ModuleSite extends WeModuleSite
 {
     /**
-     * App应用
+     * app应用对象
      * @var \og\http\App|mixed
      */
     protected $app;

@@ -49,7 +49,7 @@ class FrameInit extends Command
         }
         //获取初始化的名称
         $moduleName = $args->getArgument('moduleName');
-        if(empty($moduleName)) {
+        if(empty($moduleName) || !preg_match('/^[a-zA-Z][a-zA-z0-9]*_[a-zA-z0-9]+$/', $moduleName)) {
             $moduleName = $this->getModuleName();
         }
         //获取插件名称
@@ -74,9 +74,11 @@ class FrameInit extends Command
             '{%author%}'          => $author,
             '{%url%}'             => $url,
         ];
-        foreach (['base', 'manifest', 'module', 'processor', 'receiver', 'site'] as $file) {
+        //批量创建
+        foreach (['base', 'manifest', 'module', 'processor', 'receiver', 'site', 'wxapp', 'tinyframe'] as $file) {
             $this->createFile($file, $replaces);
         }
+
         //成功
         $this->showMessage('TinyFrame init successfully.', 'info');
     }
@@ -89,20 +91,26 @@ class FrameInit extends Command
      */
     protected function createFile($file, $replaces)
     {
+
+        $stubPath = __DIR__.'/stubs/'.$file.'.stub';
+        if(!is_file($stubPath)) {
+            return false;
+        }
+        //获取内容并替换
+        $content = file_get_contents($stubPath);
+        foreach ($replaces as $search => $replace) {
+            $content = str_replace($search, $replace, $content);
+        }
+
         switch ($file)
         {
             case 'manifest':
-                $content = file_get_contents(__DIR__.'/stubs/manifest.xml');
-                foreach ($replaces as $search => $replace) {
-                    $content = str_replace($search, $replace, $content);
-                }
-                $status = file_put_contents(App::getModulePath().'/manifest.xml', $content);
+                $status = file_put_contents(App::getModulePath().'manifest.xml', $content);
+                break;
+            case 'tinyframe':
+                $status = file_put_contents(App::getModulePath().'tinyframe', $content);
                 break;
             default:
-                $content = file_get_contents(__DIR__.'/stubs/'.$file.'.stub');
-                foreach ($replaces as $search => $replace) {
-                    $content = str_replace($search, $replace, $content);
-                }
                 $status = file_put_contents(App::getModulePath().$file.'.php', $content);
                 break;
         }

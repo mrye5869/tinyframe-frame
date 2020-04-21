@@ -12,7 +12,7 @@
 class {%module_class%}ModuleProcessor extends WeModuleProcessor
 {
     /**
-     * App应用
+     * app应用对象
      * @var \og\http\App|mixed
      */
     protected $app;

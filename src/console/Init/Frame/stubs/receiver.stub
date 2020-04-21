@@ -13,7 +13,7 @@ class  {%module_class%}ModuleReceiver extends WeModuleReceiver
 {
 
     /**
-     * App应用
+     * app应用对象
      * @var \og\http\App|mixed
      */
     protected $app;

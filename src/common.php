@@ -6,7 +6,7 @@
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: MrYe    email：55585190@qq.com  系统函数
+// | Author: MrYe    <email：55585190@qq.com>
 // +----------------------------------------------------------------------
 
 use og\http\Container;
@@ -65,6 +65,7 @@ if (!function_exists('container')) {
 if (!function_exists('invoke')) {
     /**
      * 调用反射实例化对象或者执行方法 支持依赖注入
+     *
      * @param mixed $call 类名或者callable
      * @param array $args 参数
      * @return mixed
@@ -118,6 +119,7 @@ if (!function_exists('route')) {
 if (!function_exists('event')) {
     /**
      * 触发事件
+     *
      * @param mixed $event 事件名（或者类名）
      * @param mixed $args  参数
      * @param bool  $once  是否返回第一个值
@@ -295,6 +297,7 @@ if (!function_exists('view_content')) {
 if (!function_exists('json')) {
     /**
      * 返回json数据
+     *
      * @param mixed $data    返回的数据
      * @param int   $code    状态码
      * @param array $header  头部
@@ -310,6 +313,7 @@ if (!function_exists('json')) {
 if (!function_exists('xml')) {
     /**
      * 返回xml数据
+     *
      * @param mixed $data    返回的数据
      * @param int   $code    状态码
      * @param array $header  头部

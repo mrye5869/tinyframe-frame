@@ -6,7 +6,7 @@
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: MrYe    email：55585190@qq.com
+// | Author: MrYe    <email：55585190@qq.com>
 // +----------------------------------------------------------------------
 namespace og\http;
 
@@ -107,7 +107,6 @@ class Route
 
     /**
      * 生成url
-     *
      * @param $url
      * @param array $query
      * @param bool $isdomain
@@ -119,8 +118,9 @@ class Route
         $delimiter = $this->config->get('app.pathinfo_depr');
         //根据url重新解析路由
         $route = $this->restructureRoute($url, '/');
-        $query['do'] = $route['module']. $delimiter .$route['controller'] . $delimiter . $route['action'];
-        $query['m'] = isset($query['m']) ? $query['m'] : $this->app->getModuleName();
+        $query['a']     = isset($query['a']) ? $query['a'] : $this->request->input('a');
+        $query['do']    = $route['module']. $delimiter .$route['controller'] . $delimiter . $route['action'];
+        $query['m']     = isset($query['m']) ? $query['m'] : $this->app->getModuleName();
 
         if ($this->getSysModule() == 'web') {
             $url = str_replace('./', '/web/', wurl('site/entry', $query));
@@ -139,7 +139,6 @@ class Route
 
     /**
      * 返回重构的路由
-     *
      * @access privates
      * @param $name
      * @param string $mode
@@ -176,7 +175,6 @@ class Route
 
     /**
      * 设置模块
-     *
      * @param $module
      * @return $this
      */
