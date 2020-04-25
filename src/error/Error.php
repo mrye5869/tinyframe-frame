@@ -116,7 +116,7 @@ class Error
         }
 
         try {
-           throw new \Exception($errno, $errstr);
+           throw new \Exception($errstr, $errno);
 
         } catch (\Exception $exception) {
 
@@ -204,7 +204,6 @@ class Error
             'datas'   => [],
             'tables'  => [
                 'GPC Data'              => $this->request->input(),
-                'Files'                 => $this->request->file(),
                 'W'                     => $this->request->_W(),
             ],
         ];
@@ -227,7 +226,7 @@ class Error
             $httpCode = 500;
         }
         http_response_code($httpCode);
-
+        
         if($this->app->isDebug()) {
             //调试模式
             if(PHP_SAPI == 'cli') {

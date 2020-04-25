@@ -303,7 +303,7 @@ if (!function_exists('echo_value')) {
             <div class="message">
                 <div class="info">
                     <div>
-                        <h2><?php echo $trace['code'] . sprintf('%s in %s', parse_class($trace['name']), parse_file($trace['file'], $trace['line'])); ?></h2>
+                        <h2><?php echo '['.$trace['code'].']' . sprintf('%s in %s', parse_class($trace['name']), parse_file($trace['file'], $trace['line'])); ?></h2>
                     </div>
                     <div><h1><?php echo nl2br(htmlentities($trace['message'])); ?></h1></div>
                 </div>

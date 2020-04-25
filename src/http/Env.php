@@ -25,7 +25,7 @@ class Env
         //合并
         $this->data = array_merge([
             'ROOT_PATH'     => $app->getRootPath(),
-            'MUDULE_NAME'   => $app->getModuleName(),
+            'MODULE_NAME'   => $app->getModuleName(),
             'MODULE_PATH'   => $app->getModulePath(),
             'APP_PATH'      => $app->getAppPath(),
             'NAMESPACE'     => $app->getNamespace(),

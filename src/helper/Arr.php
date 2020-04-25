@@ -11,16 +11,35 @@ namespace og\helper;
 use ArrayAccess;
 use InvalidArgumentException;
 use og\db\Collection;
+use RecursiveIteratorIterator;
+use RecursiveArrayIterator;
 
 class Arr
 {
+    /**
+     * Get array dimension
+     *
+     * @param array $array
+     * @return int
+     */
+    public  static function dimension(array $array)
+    {
+        $it = new RecursiveIteratorIterator(new RecursiveArrayIterator($array));
+        $d = 0;
+        foreach ( $it as $v ) {
+            $it->getDepth() >= $d and $d = $it->getDepth();
+        }
+
+        return ++ $d;
+    }
+
     /**
      * Get the last element of the array
      *
      * @param $array
      * @return 0|bool
      */
-    public function end($array)
+    public static function end($array)
     {
         $count = count($array);
         $count = $count > 0 ? $count - 1 : 0;
@@ -35,7 +54,7 @@ class Arr
      * @param $array
      * @return 0|bool
      */
-    public function first($array)
+    public static function first($array)
     {
         $newArr = array_slice($array, 0, 1);
 
@@ -48,7 +67,7 @@ class Arr
      * @param $array
      * @return array
      */
-    public function reverse($array)
+    public static function reverse($array)
     {
         return array_reverse($array);
     }

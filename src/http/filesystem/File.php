@@ -10,6 +10,7 @@ namespace og\http\filesystem;
 
 use SplFileInfo;
 use og\error\FileException;
+use og\facade\Env;
 
 /**
  * 文件上传类
@@ -172,12 +173,35 @@ class File extends SplFileInfo
                         $this->hashName = call_user_func($rule);
                         break;
                     default:
-                        $this->hashName = date('Ymd') . DIRECTORY_SEPARATOR . md5((string) microtime(true));
+                        if(strpos($rule, '.') !== false) {
+                            //带后缀的规则名称
+                            $this->hashName = $rule;
+                        } else {
+                            //不带任何规则的名称
+                            $this->hashName = date('Ymd') . DIRECTORY_SEPARATOR . md5((string) microtime(true));
+                        }
                         break;
                 }
             }
         }
 
-        return $this->hashName . '.' . $this->extension();
+        return strpos($rule, '.') !== false ? $this->hashName : $this->hashName . '.' . $this->extension();
+    }
+
+    /**
+     * 获取相对路径
+     * @return bool
+     */
+    public function getSrcname()
+    {
+        $pathName = $this->getPathname();
+        if(empty($pathName)) {
+            return false;
+        }
+        //解析path
+        $pathArr = explode(Env::get('root_path'), $pathName);
+        list(, $srcName) = $pathArr;
+
+        return '/'.$srcName;
     }
 }

@@ -135,4 +135,5 @@ class UploadedFile extends File
     {
         return $this->getOriginalExtension();
     }
+
 }
