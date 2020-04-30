@@ -33,6 +33,7 @@ use og\db\Db;
  * @property  Error         $error
  * @property  Route         $route
  * @property  Event         $event
+ * @property  Aop           $aop
  * @property  Middleware    $middleware
  * @property  View          $view
  */
@@ -109,7 +110,10 @@ class App extends Container
 
         Loader::loadFile($this->getModulePath() . $this->getNamespace());
 
+        $this->addAop();
+
         $this->addEvent();
+
     }
 
     /**
@@ -160,6 +164,21 @@ class App extends Container
 
                 Response::create($response, $type)->send();
             }
+
+    }
+
+    /**
+     * 添加切面
+     *
+     */
+    protected function addAop()
+    {
+
+        $aop = $this->config->get('aop');
+        if(!empty($aop)) {
+
+            $this->aop->importAspect($aop);
+        }
 
     }
 

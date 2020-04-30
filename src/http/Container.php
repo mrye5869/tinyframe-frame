@@ -50,6 +50,7 @@ class Container
         'error'     => Error::class,
         'route'     => Route::class,
         'event'     => Event::class,
+        'aop'       => Aop::class,
         'middleware'=> Middleware::class,
         'view'      => View::class,
     ];

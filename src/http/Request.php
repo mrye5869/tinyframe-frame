@@ -85,7 +85,7 @@ class Request
         //微擎参数
         $this->W = &$_W;
         $this->GPC = &$_GPC;
-        $this->server = $_SERVER;
+        $this->server = &$_SERVER;
 
         $header = [];
         if (function_exists('apache_request_headers') && $result = apache_request_headers()) {
@@ -106,7 +106,7 @@ class Request
             }
         }
         $this->header = array_change_key_case($header);
-        $this->files = $_FILES;
+        $this->files = &$_FILES;
 
         $this->session = $session;
         $this->cookie = $cookie;
@@ -169,6 +169,7 @@ class Request
      */
     public function input($name = '', $default = null, $filter = '')
     {
+
         if ($name === 'post') {
             return $_POST;
         } elseif ($name === 'get') {
@@ -176,20 +177,16 @@ class Request
         } else if (empty($default) && empty($name)) {
             return $this->GPC;
         }
+
         //获取值
         $value = isset($this->GPC[$name]) ? $this->GPC[$name] : $default;
-        if (is_array($filter)) {
-            //数组过滤
-            foreach ($filter as $fil) {
-                $filter_func = function_exists($fil . '_filter') ? $fil . '_filter' : false;
-                //执行过滤函数
-                $value = $filter_func != false ? call_user_func($filter_func, $value) : $value;
-            }
-        } elseif($filter != '') {
-            //单个过滤
-            $filter_func = function_exists($filter . '_filter') ? $filter . '_filter' : false;
-            //执行过滤函数
-            $value = $filter_func != false ? call_user_func($filter_func, $value) : $value;
+        if(is_callable($filter)) {
+            //自定义过滤
+            $value = call_user_func($filter, $value);
+
+        } elseif(method_exists($this, $filter)) {
+            //request自带过滤
+            $value = call_user_func([$this, $filter], $value);
         }
 
         return $value;

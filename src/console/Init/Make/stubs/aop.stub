@@ -1,0 +1,34 @@
+<?php
+// +----------------------------------------------------------------------
+// | zibi [ WE CAN DO IT MORE SIMPLE]
+// +----------------------------------------------------------------------
+// | Copyright (c) 2016-2020 http://xmzibi.com/ All rights reserved.
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: MrYe    <email：55585190@qq.com>
+// +----------------------------------------------------------------------
+namespace {%namespace%};
+
+
+use og\http\aop\Aspect;
+
+class {%className%} extends Aspect
+{
+    //切点
+    protected $joinPoint = [
+
+    ];
+
+    //前置方法
+    public function beforeLog()
+    {
+        echo '写日志【前】<br/>';
+    }
+
+    //后置方法
+    public function afterLog()
+    {
+        echo '写日志【后】<br/>';
+    }
+}

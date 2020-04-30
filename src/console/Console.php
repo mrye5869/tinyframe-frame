@@ -40,6 +40,7 @@ class Console
         'make-event'        => 'og\console\Init\Make\Event',
         'make-middleware'   => 'og\console\Init\Make\Middleware',
         'make-model'        => 'og\console\Init\Make\Model',
+        'make-aop'          => 'og\console\Init\Make\Aop',
     ];
 
     /**
