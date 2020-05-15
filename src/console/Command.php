@@ -55,7 +55,7 @@ abstract class Command
 
     public function __construct()
     {
-        $this->configure();
+        invoke([$this, 'configure'], func_get_args());
     }
 
     /**
@@ -70,18 +70,6 @@ abstract class Command
         $this->io = $io;
         $this->command = $command;
     }
-
-    /**
-     * 设置配置
-     */
-    protected function configure()
-    {}
-
-    /**
-     * 处理事件
-     */
-    protected function handle()
-    {}
 
     /**
      * 添加参数

@@ -26,7 +26,7 @@
 
 ## 文档
 
-[[**中文文档**]](https://www.kancloud.cn/caike_/wq_frame/1483541)
+[[**中文文档**]](https://www.kancloud.cn/yhl18/wq_frame/1483541)
 
 
 ## 环境要求
@@ -39,7 +39,7 @@
 如果你是第一次安装的话，在命令行下面，切换到你的微擎`addons`根目录下面并执行下面的命令：
 
 ~~~
-composer create-project tinyframe/tinyframe  tiny_frame
+composer create-project tinyframe/tinyframe:dev-master  tiny_frame
 
 ~~~
 ### 初始化

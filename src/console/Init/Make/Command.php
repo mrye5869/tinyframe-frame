@@ -26,7 +26,7 @@ class Command extends Make
             ->addArgument('command', Argument::OPTIONAL, 'Please enter the command');
     }
 
-    protected function getNamespace()
+    protected function getNamespace($commandNames)
     {
         return Config::get('console.namespace');
     }

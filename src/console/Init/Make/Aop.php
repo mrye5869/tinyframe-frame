@@ -24,7 +24,7 @@ class Aop extends Make
             ->addArgument('name', Argument::REQUIRED, 'Please enter the aop class');
     }
 
-    protected function getNamespace()
+    protected function getNamespace($commandNames)
     {
         return Config::get('aop.namespace');
     }

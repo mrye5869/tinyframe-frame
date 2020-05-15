@@ -24,7 +24,7 @@ class Event extends Make
             ->addArgument('name', Argument::REQUIRED, 'Please enter the event class');
     }
 
-    protected function getNamespace()
+    protected function getNamespace($commandNames)
     {
         return Config::get('event.namespace');
     }

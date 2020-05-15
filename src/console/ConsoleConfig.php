@@ -62,6 +62,7 @@ class ConsoleConfig extends DefaultApplicationConfig
     {
 
         if(empty($name) || !class_exists($command)) {
+
             return false;
         }
         //创建命令行对象

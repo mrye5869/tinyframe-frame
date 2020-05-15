@@ -56,13 +56,13 @@ abstract class Controller
         $this->assign('addon_root_path', '/addons/' . $this->request->_W('current_module.name') . '/');
         $this->assign('addon_public_path', '/addons/' . $this->request->_W('current_module.name') . '/public/');
         $this->assign('_W', $this->request->_W());
-        //初始化
-        $this->__init();
-    }
 
-    // 初始化
-    protected function __init()
-    {}
+        if(is_callable([$this, '__init'])) {
+            //初始化
+            $this->app->invoke([$this, '__init']);
+        }
+
+    }
 
     /**
      * 设置模板变量
