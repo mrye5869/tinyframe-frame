@@ -19,6 +19,12 @@ class Cache
      */
     public function set($key, $data, $expire = 0)
     {
+        if($data === null) {
+            //删除缓存信息
+            return $this->del($key);
+
+        }
+
         return cache_write($key, $data, $expire);
     }
 
